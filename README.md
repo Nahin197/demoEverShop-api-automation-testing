@@ -137,4 +137,4 @@ newman run api_automation.postman_collection.json -n 3 -r htmlextra --reporter-h
 
 ---
 
-*This project is part of the **Ostad SQA Course** curriculum for educational purposes.*
+
