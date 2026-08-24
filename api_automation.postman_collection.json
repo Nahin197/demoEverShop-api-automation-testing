@@ -1,0 +1,528 @@
+{
+  "info": {
+    "_postman_id": "88093e4d-545e-4a62-bc08-a31b2777d07a",
+    "name": "api automation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "40637292",
+    "_collection_link": "https://go.postman.co/collection/40637292-88093e4d-545e-4a62-bc08-a31b2777d07a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "search",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// const searchTextList= [\"Thermos - Yellow\" ,\"Thermos - Black\",\"Vase - Green\",\"Vase - Black\"];\r",
+              "\r",
+              "const searchTextList= [\"Thermos\" ,\"Thermos\",\"Vase\",\"Vase\"];\r",
+              "// console.log(searchTextList[0]);\r",
+              "function getRandomIntInclusive(min, max) {\r",
+              "  const minCeiled = Math.ceil(min);\r",
+              "  const maxFloored = Math.floor(max);\r",
+              "  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);\r",
+              "}\r",
+              "\r",
+              "console.log(getRandomIntInclusive(0,3));\r",
+              "\r",
+              "const index=getRandomIntInclusive(0,3);\r",
+              "const searchText=searchTextList[index];\r",
+              "console.log(searchText);\r",
+              "pm.collectionVariables.set(\"search_text\",searchText);\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var responsebody = pm.response.json();\r",
+              "\r",
+              "console.log(pm.response.status);\r",
+              "\r",
+              "pm.test(\"validate the status code is 200\",()=>{\r",
+              "    pm.expect(200).to.eql(pm.response.code);\r",
+              "})\r",
+              "\r",
+              "const expectedsearchText= pm.collectionVariables.get(\"search_text\");\r",
+              "console.log(expectedsearchText)\r",
+              " const actualSearchText = responsebody.eContext.graphqlResponse.e3izd12s1b8msrmpl65.products.currentFilters[0].value;\r",
+              "\r",
+              "pm.test(`validate serach text is  ${expectedsearchText}  in currentFilters`,()=>{\r",
+              "    pm.expect(expectedsearchText).to.eql(actualSearchText);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"validate successful entry value is true\", ()=>{\r",
+              "    pm.expect(true).to.eql(responsebody.success)\r",
+              "})\r",
+              "\r",
+              "const iteam =responsebody.eContext.graphqlResponse.e3izd12s1b8msrmpl65.products.items;\r",
+              "\r",
+              "\r",
+              "pm.test(`validate search product contains with the string ${expectedsearchText}` , ()=>{\r",
+              "    \r",
+              "    let actualproduct=\"\";\r",
+              "\r",
+              "    for (let i=0;i<iteam.length;i++){\r",
+              "        actualproduct=iteam[i].name;\r",
+              "        console.log(actualproduct,expectedsearchText)\r",
+              "        pm.expect(actualproduct).to.contains(expectedsearchText);\r",
+              "        console.log(`Expected :  ${actualproduct} have text ${expectedsearchText}`);\r",
+              "    }\r",
+              "})\r",
+              "\r",
+              "\r",
+              "const productsku = iteam[0].sku;\r",
+              "pm.collectionVariables.set(\"product_sku\",productsku);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://demo.evershop.io/search?keyword={{search_text}}&ajax=true",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io"
+          ],
+          "path": [
+            "search"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "{{search_text}}"
+            },
+            {
+              "key": "ajax",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "pre_viewCart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var responseBody = pm.response.json();\r",
+              "\r",
+              "pm.test(\"validate status code is 200\",()=>{\r",
+              "\r",
+              "    pm.expect(200).to.eql(pm.response.code);\r",
+              "})\r",
+              "\r",
+              "let preProdQty =0;\r",
+              "\r",
+              "try{\r",
+              "    preProdQty = responseBody.eContext.graphqlResponse.e3izd12s1b8msrmplc3.totalQty;\r",
+              "} \r",
+              "catch(err){\r",
+              "    console.log(\"There is no product in the cart\");\r",
+              "}\r",
+              " \r",
+              "pm.collectionVariables.set(\"pre_total_qty\",preProdQty);\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://demo.evershop.io/cart?ajax=true",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io"
+          ],
+          "path": [
+            "cart"
+          ],
+          "query": [
+            {
+              "key": "ajax",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "addtoCarT",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "function getRandomIntInclusive(min, max) {\r",
+              "  const minCeiled = Math.ceil(min);\r",
+              "  const maxFloored = Math.floor(max);\r",
+              "  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);\r",
+              "}\r",
+              "\r",
+              " const productQty= getRandomIntInclusive(1,4);\r",
+              "\r",
+              "pm.collectionVariables.set(\"product_Qty\", productQty);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var responseBody = pm.response.json();",
+              "",
+              "pm.test(\"validate status code is 200\",()=>{",
+              "",
+              "    pm.expect(200).to.eql(pm.response.code);",
+              "})",
+              "",
+              "",
+              "",
+              "pm.test(\"validate product sku\",()=>{",
+              "",
+              "    const expectedsku = pm.collectionVariables.get(\"product_sku\");",
+              "    const actualsku = responseBody.data.item.product_sku;",
+              "    pm.expect(expectedsku).to.eql(actualsku);",
+              "",
+              "})",
+              "",
+              "",
+              "",
+              "pm.test(\"validate product quantity\", ()=>{",
+              "",
+              "    const expectedQty = pm.collectionVariables.get(\"pre_total_qty\") + pm.collectionVariables.get(\"product_Qty\") ;",
+              "    const actualQty =  responseBody.data.item.qty;",
+              "    pm.expect(expectedQty).to.eql(actualQty);",
+              "",
+              "})",
+              "",
+              "const actualQty =  responseBody.data.item.qty;",
+              "pm.collectionVariables.set(\"post_total_qty\", actualQty);",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"sku\": \"{{product_sku}}\",\r\n    \"qty\": {{product_Qty}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://demo.evershop.io/api/cart/mine/items",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io"
+          ],
+          "path": [
+            "api",
+            "cart",
+            "mine",
+            "items"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post_viewCarT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "var responseBody =pm.response.json();\r",
+              "\r",
+              "const expectedTotalQty = pm.collectionVariables.get(\"post_total_qty\");\r",
+              "const actualTotalQty = responseBody.eContext.graphqlResponse.e3izd12s1b8msrmplc3.totalQty;\r",
+              "\r",
+              "pm.test(\"validate total quantity\",()=>{\r",
+              "    pm.expect(expectedTotalQty).to.eql(actualTotalQty);\r",
+              "}) \r",
+              "\r",
+              "const removeApi = responseBody.eContext.graphqlResponse.e3izd12s1b8msrmplc3.items[0].removeApi;\r",
+              "pm.collectionVariables.set(\"remove_api\",removeApi );\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://demo.evershop.io/cart?ajax=true",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io"
+          ],
+          "path": [
+            "cart"
+          ],
+          "query": [
+            {
+              "key": "ajax",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete_from_cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "\r",
+              "pm.test(\"Status code is 500\", function () {\r",
+              "    pm.response.to.have.status(500);\r",
+              "    });"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://demo.evershop.io{{remove_api}}",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io{{remove_api}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete_all_iteams",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const cart = Object.values(pm.response.json().eContext.graphqlResponse)\r",
+              "  .find(x => x?.items);\r",
+              "\r",
+              "cart.items.forEach(item => {\r",
+              "    pm.sendRequest({\r",
+              "        url: \"https://demo.evershop.io\" + item.removeApi,\r",
+              "        method: \"DELETE\"\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+          },
+          {
+            "key": "Accept-Language",
+            "value": "en-GB,en-US;q=0.9,en;q=0.8"
+          },
+          {
+            "key": "Connection",
+            "value": "keep-alive"
+          },
+          {
+            "key": "If-None-Match",
+            "value": "W/\"4333a-dvPetcELq6rYgLRVAmdbNznZEAE\""
+          },
+          {
+            "key": "Referer",
+            "value": "https://demo.evershop.io/kids/modern-ceramic-vase-green?color=2"
+          },
+          {
+            "key": "Sec-Fetch-Dest",
+            "value": "document"
+          },
+          {
+            "key": "Sec-Fetch-Mode",
+            "value": "navigate"
+          },
+          {
+            "key": "Sec-Fetch-Site",
+            "value": "same-origin"
+          },
+          {
+            "key": "Sec-Fetch-User",
+            "value": "?1"
+          },
+          {
+            "key": "Upgrade-Insecure-Requests",
+            "value": "1"
+          },
+          {
+            "key": "User-Agent",
+            "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Not=A?Brand\";v=\"99\", \"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"Windows\""
+          },
+          {
+            "key": "Cookie",
+            "value": "__stripe_mid=3d48d189-0b0f-4b11-afbe-c13f6ef6b2dbb7add7; sid=s%3A92My8aOcklq2h4o3wdXD_pOYt9CH-DCB.qpo8Mf%2FdJNSIUF1or0yEFOBUknEDr%2F6xWqhk%2Bdf6H%2BY"
+          }
+        ],
+        "url": {
+          "raw": "https://demo.evershop.io/cart?ajax=true",
+          "protocol": "https",
+          "host": [
+            "demo",
+            "evershop",
+            "io"
+          ],
+          "path": [
+            "cart"
+          ],
+          "query": [
+            {
+              "key": "ajax",
+              "value": "true"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://demo.evershop.io/cart' \\\r\n--header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \\\r\n--header 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\r\n--header 'Connection: keep-alive' \\\r\n--header 'If-None-Match: W/\"4333a-dvPetcELq6rYgLRVAmdbNznZEAE\"' \\\r\n--header 'Referer: https://demo.evershop.io/kids/modern-ceramic-vase-green?color=2' \\\r\n--header 'Sec-Fetch-Dest: document' \\\r\n--header 'Sec-Fetch-Mode: navigate' \\\r\n--header 'Sec-Fetch-Site: same-origin' \\\r\n--header 'Sec-Fetch-User: ?1' \\\r\n--header 'Upgrade-Insecure-Requests: 1' \\\r\n--header 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36' \\\r\n--header 'sec-ch-ua: \"Not=A?Brand\";v=\"99\", \"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\"' \\\r\n--header 'sec-ch-ua-mobile: ?0' \\\r\n--header 'sec-ch-ua-platform: \"Windows\"' \\\r\n--cookie '__stripe_mid=3d48d189-0b0f-4b11-afbe-c13f6ef6b2dbb7add7; sid=s%3A92My8aOcklq2h4o3wdXD_pOYt9CH-DCB.qpo8Mf%2FdJNSIUF1or0yEFOBUknEDr%2F6xWqhk%2Bdf6H%2BY'"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "search_text",
+      "value": ""
+    },
+    {
+      "key": "product_sku",
+      "value": ""
+    },
+    {
+      "key": "product_Qty",
+      "value": ""
+    },
+    {
+      "key": "pre_total_qty",
+      "value": ""
+    },
+    {
+      "key": "remove_api",
+      "value": ""
+    },
+    {
+      "key": "post_total_qty",
+      "value": ""
+    }
+  ]
+}
