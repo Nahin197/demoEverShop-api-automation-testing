@@ -1,6 +1,6 @@
 # E-Commerce API Automation - EverShop Demo
 
-> **Postman Collection | API Test Automation | Module 10**
+> **Postman Collection | API Test Automation**
 
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 ![Newman](https://img.shields.io/badge/Newman-CLI-green?style=for-the-badge)
@@ -47,8 +47,8 @@ using Postman collection scripts and Newman for CLI/CI execution with HTML repor
 Module-10/
 |-- api_automation.postman_collection.json   # Postman collection (6 requests, 13 assertions)
 |-- newman/
-|   `-- api automation-2026-08-24-*.html    # Newman HTML execution report
-`-- README.md
+|-- api automation-2026-08-24-*.html    # Newman HTML execution report
+ -- README.md
 ```
 
 ---
@@ -121,7 +121,7 @@ newman run api_automation.postman_collection.json -n 3 -r htmlextra --reporter-h
 
 | Tool | Role |
 |------|------|
-| **Postman** | Collection authoring and manual execution |
+| **Postman** | Collection authoring and automation execution |
 | **Newman** | CLI and CI pipeline runner |
 | **Newman HTMLExtra** | HTML report generation |
 | **JavaScript ES6** | Pre-request scripts and test assertions |
@@ -131,7 +131,7 @@ newman run api_automation.postman_collection.json -n 3 -r htmlextra --reporter-h
 ## Author
 
 **Nahin**  
-SQA Engineer - Ostad SQA Bootcamp, Module 10 (API Automation)
+
 
 - GitHub: [Nahin197](https://github.com/Nahin197)
 
