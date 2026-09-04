@@ -66,28 +66,7 @@ Module-10/
 
 ---
 
-## How to Run
 
-### Option 1 - Postman GUI
-
-1. Open **Postman** → **Import** → select `api_automation.postman_collection.json`
-2. Click **Run collection** in Collection Runner
-
-### Option 2 - Newman CLI
-
-```bash
-# Install Newman and HTML reporter
-npm install -g newman
-npm install -g newman-reporter-htmlextra
-
-# Run with HTML report
-newman run api_automation.postman_collection.json -r htmlextra --reporter-htmlextra-export newman/report.html
-
-# Run multiple iterations
-newman run api_automation.postman_collection.json -n 3 -r htmlextra --reporter-htmlextra-export newman/report.html
-```
-
----
 
 ## Assertions Implemented (13 total)
 
